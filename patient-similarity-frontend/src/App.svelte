@@ -1,0 +1,19 @@
+<script>
+  import { currentPage } from "./stores";
+
+  import Navbar from "./components/Navbar.svelte";
+  import Input from "./lib/Input.svelte";
+  import Dashboard from "./lib/Dashboard.svelte";
+  import Compare from "./lib/Compare.svelte";
+</script>
+
+<main>
+  <Navbar />
+  {#if $currentPage === "input"}
+    <Input />
+  {:else if $currentPage === "dashboard"}
+    <Dashboard />
+  {:else if $currentPage === "compare"}
+    <Compare />
+  {/if}
+</main>

@@ -1,0 +1,5 @@
+# data/patient_data.csv
+age,gender,weight,height
+25,Male,70,175
+30,Female,60,160
+40,Male,85,180
