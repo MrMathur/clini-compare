@@ -1,16 +1,17 @@
 <script>
-  export let contact;
-  import { currentPage } from "../stores";
+  export let patient;
+  import { currentPage, selectedPatient } from "../stores";
 
   function goToCompareView() {
+    selectedPatient.set(patient);
     currentPage.set("compare");
   }
 </script>
 
 <button on:click={goToCompareView} class="contact-card">
-  <h3>{contact.name}</h3>
-  <p>Disease: {contact.phone}</p>
-  <p>Note: {contact.email}</p>
+  <h3>{patient.note_id}</h3>
+  <p>Similarity Score: {patient.similarity}</p>
+  <p>Note: {patient.text}</p>
 </button>
 
 <style>

@@ -1,151 +1,62 @@
 <script>
-  // Optional: You can add script logic here if needed
-</script>
+  import { onMount } from "svelte";
+  import NoteColumn from "../components/NoteColumn.svelte";
+  import { selectedPatient } from "../stores";
 
-<div class="three-columns">
-  <div class="column">
-    <h2>Input Patient</h2>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      This is the content for the first column. You can add more text here to
-      fill this section with relevant information or details. This section
-      should now be scrollable if the content is longer than the column height.
-    </p>
-    <p>
-      Add more text to test the scroll behavior. Add more text to test the
-      scroll behavior. Add more text to test the scroll behavior.
-    </p>
-  </div>
-  <div class="column">
-    <h2>Section 2</h2>
-    <p>
-      This is the content for the second column. Add any additional information,
-      insights, or data as needed. This section should also be scrollable.
-    </p>
-    <p>
-      Add more text to test the scroll behavior. Add more text to test the
-      scroll behavior. Add more text to test the scroll behavior.
-    </p>
-  </div>
-  <div class="column">
-    <h2>Section 3</h2>
-    <p>
-      This is the content for the third column. You can expand this with more
-      text or details related to your application. The column will have a
-      scrollbar if needed.
-    </p>
-    <p>
-      Add more text to test the scroll behavior. Add more text to test the
-      scroll behavior. Add more text to test the scroll behavior.
-    </p>
-  </div>
-</div>
+  let input_note = "";
+  let patientData = null;
 
-<style>
-  html,
-  body {
-    height: 100%; /* Ensure the body and html are 100% height */
-    margin: 0;
+  const DUMMY_TEXT = "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sequi quo ab necessitatibus repellat expedita eaque ad cumque quibusdam, impedit voluptatem sed mollitia recusandae nisi facere ipsum quasi distinctio veritatis qui?";
+
+  onMount(() => {
+    selectedPatient.subscribe((patient) => {
+      patientData = patient;
+    });
+  });
+
+  // Function to fetch the variable from Flask
+  async function get_input_note() {
+    try {
+      const response = await fetch("http://localhost:5001/get-input_note"); // Adjust the port if different
+      const data = await response.json();
+      input_note = data.input_note; // Assign the fetched variable to the Svelte variable
+    } catch (error) {
+      console.error("Error fetching variable:", error);
+    }
   }
 
+  // Call the function when the component loads
+  get_input_note();
+</script>
+
+{#if patientData != null}
+  <div class="three-columns">
+    <NoteColumn
+      title="Input Note"
+      type="Radiology Note"
+      right_border={true}
+      note={input_note}
+    />
+    <NoteColumn
+      title={"Note Id: " + patientData.note_id}
+      type="Radiology Note"
+      right_border={false}
+      note={patientData.text}
+    />
+    <NoteColumn
+      title="&nbsp"
+      type="Discharge Note"
+      right_border={false}
+      note={DUMMY_TEXT}
+    />
+  </div>
+{/if}
+
+<style>
   .three-columns {
     display: flex;
     justify-content: space-between;
-    height: 100vh; /* Full viewport height */
-    gap: 1rem; /* Adjust the gap between columns */
-  }
-
-  .column {
-    flex: 1; /* Each column takes equal space */
-    padding: 1rem;
-    background-color: #f0f0f0; /* Light background for readability */
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    overflow-y: auto; /* Makes columns scrollable */
-    display: flex;
-    flex-direction: column;
-  }
-
-  .column h2 {
-    margin-top: 0;
+    align-items: center;
+    align-self: stretch;
   }
 </style>

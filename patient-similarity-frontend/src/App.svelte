@@ -17,3 +17,17 @@
     <Compare />
   {/if}
 </main>
+
+<style>
+
+  main {
+    padding: none;
+    margin: none;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>

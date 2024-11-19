@@ -12,12 +12,13 @@
 
 <nav class="navbar">
   <div class="logo">CliniCompare</div>
+  <!-- <div class="nav-pill-list"></div> -->
   <div class="nav-buttons">
     {#if $currentPage != "input" && $currentPage != "dashboard"}
-      <button on:click={goToDatabase}>Database</button>
+      <button class="secondary" on:click={goToDatabase}>Database</button>
     {/if}
     {#if $currentPage != "input"}
-      <button on:click={createNewPatient}>New Patient Note</button>
+      <button class="primary" on:click={createNewPatient}>New Patient Note</button>
     {/if}
   </div>
 </nav>
@@ -26,36 +27,36 @@
   .navbar {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; /* Vertically centers items */
     padding: 1rem;
-    background-color: #f8f9fa; /* Adjust as needed */
     top: 0;
     width: 100%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    border-bottom: 1px solid #d9d9d9;
+    background: #ffffff;
   }
 
   .logo {
     font-size: 1.5rem;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    margin-left: 20px; /* Adds 20px space to the left */
   }
 
   .nav-buttons {
     display: flex;
+    align-items: center;
     gap: 1rem;
+    margin-right: 20px; /* Adds 20px space to the right */
   }
 
   button {
-    padding: 0.5rem 1rem;
-    border: none;
+    display: flex;
+    padding: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    border-radius: 0.5rem;
     cursor: pointer;
-    background-color: #007bff; /* Adjust button color */
-    color: #fff;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-  }
-
-  button:hover {
-    background-color: #0056b3;
   }
 </style>

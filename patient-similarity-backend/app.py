@@ -1,34 +1,68 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+
 import pandas as pd
-# from services.similarity import calculate_similarity
+import numpy as np
 
-# Your existing routes...
+from sentence_transformers import SentenceTransformer
+
+from scipy.spatial.distance import cosine
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
 app = Flask(__name__)
-CORS(app)  # This wilsl allow cross-origin requests
+CORS(app)  # This will allow all origins by default
 
-# Load your patient dataset (e.g., from a CSV or database)
-# patient_data = pd.read_csv('data/patient_data.csv')  # Example CSV file
+patients_dataset = pd.read_csv('./data/radiology_embeddings.csv')
 
-@app.route('/similarity', methods=['POST'])
-def get_similarity():
-    input_patient = request.json.get("input_patient")
-    # similarity_scores = calculate_similarity(input_patient, patient_data)
-    
-    # Find the most similar patient
-    # most_similar_index = similarity_scores.argmax()
-    # most_similar_patient = patient_data.iloc[most_similar_index]
-    # similarity_score = similarity_scores[0, most_similar_index]
+def formatStringToArray(string_array):
+    cleaned_string = string_array.replace('[', '').replace(']', '').replace('\n', ' ').strip()
+    array = np.array([float(x) for x in cleaned_string.split()])
+    return array
 
-    # Respond with the most similar patient data and similarity score
-    # return jsonify({
-    #     "most_similar_patient": most_similar_patient.to_dict(),
-    #     "similarity_score": similarity_score
-    # })
+patients_dataset['embedding'] = patients_dataset['embedding'].apply(lambda x: formatStringToArray(x))
 
-    return jsonify({
-        "input_patient": input_patient
-    })
+patient_data = {
+    "input_note": "",
+    "input_embedding": ""
+}
+
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+def findSimilarPatients(input_embedding):
+    df = patients_dataset.copy()
+    df['similarity'] = df['embedding'].apply(lambda x: cosine_similarity([input_embedding], [x])[0][0])
+    similar_patients = df.sort_values(by='similarity', ascending=False).head(5)
+    return similar_patients
+
+# Basic text cleaning function
+def preprocess_text(text):
+    text = text.lower().replace('\n', ' ').replace('\r', '')
+    return text.strip()
+
+@app.route('/post-input-note', methods=['POST'])
+def post_input_note():
+    data = request.json
+    input_note = data.get('input_note')  # Use dictionary syntax
+    input_embedding = model.encode(preprocess_text(input_note))
+    patient_data['input_note'] = input_note
+    patient_data['input_embedding'] = input_embedding
+    response = {"message": "Data received", "received_value": input_note}
+    return jsonify(response)
+
+@app.route('/get-similar-patients', methods=['GET'])
+def get_similar_patients():
+    input_note = patient_data['input_note']
+    input_embedding = patient_data['input_embedding']
+    similarPatients = findSimilarPatients(input_embedding)
+    similarPatientsResponse = similarPatients.to_json(orient="records")
+    response = {"input_note": input_note, "similarPatients": similarPatientsResponse}
+    return jsonify(response)
+
+@app.route('/get-input_note', methods=['GET'])
+def get_ipnut_note():
+    response = {"input_note": patient_data['input_note']}
+    return jsonify(response)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)

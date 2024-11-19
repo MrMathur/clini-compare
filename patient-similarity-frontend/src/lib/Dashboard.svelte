@@ -2,20 +2,9 @@
   import PatientCard from "../components/PatientCard.svelte";
   import StatisticCard from "../components/StatisticCard.svelte";
   import ScatterPlot from "../components/ScatterPlot.svelte";
+  let showLeftCol = false;
   // Sample data for contact cards
-  let contacts = [
-    { name: "John Doe", phone: "123-456-7890", email: "john.doe@example.com" },
-    {
-      name: "Jane Smith",
-      phone: "987-654-3210",
-      email: "jane.smith@example.com",
-    },
-    {
-      name: "Alice Johnson",
-      phone: "555-123-4567",
-      email: "alice.johnson@example.com",
-    },
-  ];
+  let parsedPatients = [];
 
   // Sample data for aggregate statistics
   let stats = [
@@ -23,28 +12,46 @@
     { title: ">90% similarity", value: "4" },
     { title: "Cluster Average", value: "82%" },
   ];
+
+  // Function to fetch the variable from Flask
+  async function get_similar_patients() {
+    try {
+      const response = await fetch(
+        "http://localhost:5001/get-similar-patients"
+      ); // Adjust the port if different
+      const data = await response.json();
+      parsedPatients = JSON.parse(data.similarPatients);
+    } catch (error) {
+      console.error("Error fetching variable:", error);
+    }
+  }
+
+  // Call the function when the component loads
+  get_similar_patients();
 </script>
 
 <div class="dashboard">
   <!-- Left Column for D3 Visualization -->
-  <div class="left-column">
-    <!-- Add your D3 visualization setup here later -->
-    <div class="d3-container">
-      <!-- Top Section: Aggregate Statistics -->
-      <div class="stats-section">
-        {#each stats as stat}
-          <StatisticCard {stat} />
-        {/each}
+  {#if showLeftCol}
+    <div class="left-column">
+      <!-- Add your D3 visualization setup here later -->
+      <div class="d3-container">
+        <!-- Top Section: Aggregate Statistics -->
+        <div class="stats-section">
+          {#each stats as stat}
+            <StatisticCard {stat} />
+          {/each}
+        </div>
+        <ScatterPlot />
       </div>
-      <ScatterPlot />
     </div>
-  </div>
+  {/if}
 
   <!-- Right Column for Contact Cards -->
   <div class="right-column">
     <h2>Most Similar Patients</h2>
-    {#each contacts as contact (contact.name)}
-      <PatientCard {contact} />
+    {#each parsedPatients as patient (patient.subject_id)}
+      <PatientCard {patient} />
     {/each}
   </div>
 </div>
