@@ -1,7 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import NoteColumn from "../components/NoteColumn.svelte";
-  import { selectedPatient } from "../stores";
+  import { loadState, selectedPatient } from "../stores";
 
   let input_note = "";
   let patientData = null;
@@ -16,16 +16,17 @@
 
   // Function to fetch the variable from Flask
   async function get_input_note() {
+    loadState.set(true);
     try {
       const response = await fetch("http://localhost:5001/get-input_note"); // Adjust the port if different
       const data = await response.json();
       input_note = data.input_note; // Assign the fetched variable to the Svelte variable
+      loadState.set(false);
     } catch (error) {
       console.error("Error fetching variable:", error);
     }
   }
 
-  // Call the function when the component loads
   get_input_note();
 </script>
 

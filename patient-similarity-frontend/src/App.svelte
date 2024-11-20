@@ -5,10 +5,14 @@
   import Input from "./lib/Input.svelte";
   import Dashboard from "./lib/Dashboard.svelte";
   import Compare from "./lib/Compare.svelte";
+  import Loading from "./lib/Loading.svelte";
 </script>
 
 <main>
   <Navbar />
+
+  <Loading />
+
   {#if $currentPage === "input"}
     <Input />
   {:else if $currentPage === "dashboard"}
@@ -19,7 +23,6 @@
 </main>
 
 <style>
-
   main {
     padding: none;
     margin: none;

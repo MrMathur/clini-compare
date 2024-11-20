@@ -2,7 +2,6 @@
 
 <!-- Bottom Section: Scatterplot -->
 <div class="scatterplot-section" id="scatterplot-container">
-  <h2>Scatterplot</h2>
   <svg></svg>
 </div>
 
@@ -10,6 +9,7 @@
   .scatterplot-section {
     border: 1;
     height: 100%;
+    padding: 1rem;
   }
   svg {
     width: 100%; /* Fill the parent container */

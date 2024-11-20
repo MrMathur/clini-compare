@@ -18,12 +18,14 @@
   .column {
     padding: 1rem;
     border-radius: 8px;
-    overflow-y: auto; /* Makes columns scrollable */
+    overflow-y: hidden;
+    margin: 0;
 
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     align-self: stretch;
+    flex: 1;
   }
 
   .right-border {
